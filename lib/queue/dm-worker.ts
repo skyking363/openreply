@@ -837,7 +837,7 @@ async function sendFollowRecheckAck({
   operationId: string | null;
 }): Promise<void> {
   const message = process.env.FOLLOW_RECHECK_ACK_MESSAGE?.trim();
-  if (!message) return;
+  if (!message || !operationId) return;;
   try {
     // One acknowledgement per re-check cycle: a burst of taps collapses into a
     // single re-check (bucketed job id) and should get a single reply too.
@@ -852,7 +852,7 @@ async function sendFollowRecheckAck({
     await sendPostbackOnce({
       // Its own id: the tap's id is claimed later by the link or prompt that
       // the re-check sends, and claiming it here would suppress that message.
-      operationId: operationId ? `${operationId}:ack` : null,
+      operationId: `${operationId}:ack`,
       send: () =>
         sendDirectMessage({ context, instagramAccountId, userId, message }),
     });
